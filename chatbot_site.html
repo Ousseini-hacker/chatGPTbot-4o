@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Intelligent</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; background: #f4f4f4; }
+        #chat-container { width: 90%; max-width: 600px; margin: auto; padding: 20px; background: white; border-radius: 10px; }
+        #messages { height: 300px; overflow-y: auto; border: 1px solid #ddd; margin-bottom: 10px; padding: 10px; }
+        input, button { padding: 10px; margin: 5px; border-radius: 5px; }
+        button { background-color: #007BFF; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Intelligent</h1>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <input type="text" id="user-input" placeholder="Écrivez ici..." />
+        <button onclick="sendMessage()">Envoyer</button>
+    </div>
+    <script>
+        const apiKey = "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''; // Remplacez par votre clé API OpenAI
+
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            if (userInput.trim() !== "") {
+                const messages = document.getElementById("messages");
+                const userMessage = document.createElement("div");
+                userMessage.textContent = "Vous : " + userInput;
+                messages.appendChild(userMessage);
+
+                // Appeler l'API OpenAI
+                const botResponse = await fetch("https://api.openai.com/v1/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "text-davinci-003",
+                        prompt: userInput,
+                        max_tokens: 150
+                    })
+                });
+                const data = await botResponse.json();
+                const botMessage = document.createElement("div");
+                botMessage.textContent = "Bot : " + (data.choices[0].text || "Je ne peux pas répondre pour le moment.");
+                messages.appendChild(botMessage);
+
+                // Réinitialiser l'entrée utilisateur
+                document.getElementById("user-input").value = "";
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
